@@ -1,0 +1,248 @@
+from dataclasses import dataclass
+from typing import Callable
+
+from .character import Character
+from .errors import StageLimitExceeded, CharacterNotOnstage, NotEnoughCharacters
+from .operations import Value, Int, Operation, value_as_str
+
+@dataclass
+class _Act:
+    """
+    A dataclass for adding acts to plays.
+    """
+    obj: 'Act'
+    number: str
+    description: str
+
+class Play:
+    """A play script in the Shakespeare Programming Language (SPL). All programs made using **PySPL** must use this object."""
+    def __init__(self, description: str) -> None:
+        self.description = description
+        self._characters: list[Character] = []
+        self._characters_on_stage: list[Character] = []
+        self.acts: list[_Act] = []
+        self.lines = []
+
+    @property
+    def characters(self) -> list[Character]:
+        """
+        Returns a list of the characters in this play.
+
+        :rtype: list[:py:class:`Character`]
+        """
+        return self._characters
+    
+    def add_character(self, character: Character):
+        """
+        Adds a character to the play.
+
+        .. note::
+
+            This function does **NOT** add the character onto the stage. Use :py:func:`Act.enter` for that purpose.
+        
+        """
+        self._characters.append(character)
+    
+    def character(self, name: str, description: str) -> Character:
+        """
+        Creates a character and adds it to the play.
+
+        This is equivalent to:
+
+        .. code-block:: python
+        
+            character = pyspl.Character(name, description)
+            play.add_character(character)
+
+        :return: The character created.
+        :rtype: Character
+        :raises ValueError: The character name supplied is invalid.
+        """
+        character = Character(name, description)
+        return character
+    
+    def add_act(self, act: 'Act', number: str, description: str):
+        self.acts.append(_Act(act, number, description))
+
+    def code(self):
+        self.lines = [self.description, '\n']
+        for character in self._characters:
+            self.lines.append(f'{character.name}, {character.description}')
+        self.lines.append('\n')
+        for act in self.acts:
+            lines = act.obj._gencode(act.number, act.description)
+            self.lines.extend(lines)
+            self.lines.append('\n')
+
+        return '\n'.join(self.lines)
+
+    def save(self, fn: str):
+        self.code()
+        with open(fn, 'w') as f:
+            for line in self.lines:
+                f.write(line + '\n')
+
+
+@dataclass
+class Scene:
+    """
+    Represents a scene in a SPL play.
+
+    This is a data class.
+     
+    .. warning::
+
+        This should not be constructed manually by the user. 
+        Instead, use :py:meth:`Act.scene` or :py:meth:`Act.add_scene`.
+
+    """
+    name: str
+    number: str
+    description: str
+
+class Act:
+    """
+    Represents an act in a SPL play.
+
+    The recommended way is to subclass this object and create methods inside it, then add them by using :py:func:`Act.scene`.
+
+    Example
+    ^^^^^^^
+    .. code-block:: python
+        
+        class Act1(pyspl.Act):
+            def __init__(self):
+                super().__init__(self, 'I', 'The First Act.')
+
+            @pyspl.Act.scene('I', 'The First Scene.')
+            def scene1(self):
+                # do whatever you need to do here
+                pass    
+
+    """
+    def __init__(self, play: Play):
+        self._play = play
+        self._scene_names: list[Scene] = []
+        self._lines: list[str] = []
+    
+    @staticmethod
+    def scene(number: str, description: str):
+        """
+        :decorator:
+
+        Adds the function as a scene to the act.
+
+        This is a decorator.
+
+        :param str number: A roman numeral representing the number of the scene. 
+        :param str description: The description of the scene. Must end with a period (AKA a full stop) (``.``).
+        """
+        def decorator(func: Callable):
+            def wrapper(self, *args, **kwargs):
+                self.add_scene(func, number, description)
+                func(self, *args, **kwargs)
+
+            return wrapper
+        return decorator
+    
+    def add_scene(self, func: Callable, number: str, description: str) -> None:
+        """
+        Adds a scene to the act.
+
+        :param typing.Callable func: The function of the scene to add.
+        :param str number: A roman numeral representing the number of the scene. 
+        :param str description: The description of the scene. Must end with a period (AKA a full stop) (``.``).
+        """
+        self._scene_names.append(Scene(func.__name__, number=number, description=description))
+
+    def enter(self, *characters: Character):
+        """
+        Calls for the characters provided to enter the stage.
+
+        :param \*characters: The characters to enter the stage.
+        :type \*characters: Character, ...
+        """
+        if len(characters) + len(self._play._characters_on_stage) > 2:
+            raise StageLimitExceeded('character limit onstage exceeded')
+        
+        self._play._characters_on_stage.extend(characters)
+        self._lines.append(f'[Enter {" and ".join(map(lambda c: str(c), characters))}]')
+    
+    def exit(self, *characters: Character):
+        """
+        Calls for the characters provided to exit the stage.
+
+        :param \*characters: The characters to exit the stage. If not provided, all characters onstage will exit the stage.
+        :type \*characters: Character, ...
+        """
+        for character in characters:
+            if character not in self._play._characters_on_stage:
+                raise CharacterNotOnstage(f'character not on stage: {character}')
+        
+        if len(characters) == 0:
+            self._play._characters_on_stage = []
+            self._lines.append('[Exeunt]')
+        elif len(characters) == 1:
+            self._play._characters_on_stage.remove(characters[0])
+            self._lines.append(f'[Exit {characters[0]}]')
+        else:
+            for character in characters:
+                self._play._characters_on_stage.remove(character)
+            
+            self._lines.append(f'[Exeunt {" and ".join(map(lambda c: str(c), characters))}]')
+        
+    def set(self, target: Character, value: Value):
+        """
+        Sets a character to a value.
+
+        :param Character target: The character being set.
+        :param value: The value to set.
+        :type value: int | Character | Operation
+        """
+        characters_onstage = [*self._play._characters_on_stage]
+        if target not in characters_onstage:
+            raise CharacterNotOnstage('tried to set value of a character not on stage')
+        if len(characters_onstage) < 2:
+            raise NotEnoughCharacters('unable to set character value: only one character on stage')
+        
+        first_item = characters_onstage.pop(0)
+        if first_item == target:
+            setter = characters_onstage[0] # The second item (index=1) is now the first item (index=0).
+        else:
+            setter = first_item
+
+        self._lines.append(f'{setter}: You are {value_as_str(value)}!')
+
+    def print(self, target: Character, type: type[str|int]=str):
+        characters_onstage = [*self._play._characters_on_stage]
+        if target not in characters_onstage:
+            raise CharacterNotOnstage('tried to print value of a character not on stage')
+        if len(characters_onstage) < 2:
+            raise NotEnoughCharacters('unable to print character value: only one character on stage')
+        
+        first_item = characters_onstage.pop(0)
+        if first_item == target:
+            printer = characters_onstage[0] # The second item (index=1) is now the first item (index=0).
+        else:
+            printer = first_item
+        
+        if type == str:
+            line = 'Speak your mind'
+        elif type == int:
+            line = 'Open your heart'
+        else:
+            raise TypeError('invalid type to print')
+
+        self._lines.append(f'{printer}: {line}!')
+
+    def _gencode(self, number: str, description: str):
+        self._lines = [f'Act {number}: {description}']
+        for scene in self._scene_names:
+            self._lines.append(f'Scene {scene.number}: {scene.description}')
+            scene_func = getattr(self, scene.name)
+            scene_func()
+
+        return self._lines
+
+        
+

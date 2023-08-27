@@ -1,0 +1,25 @@
+p, strong, .toctree-wrapper:not(.caption), .sphinx-tabs-tab {
+    font-family: Georgia, Times, ui-serif, serif !important;
+}
+
+.sphinx-tabs-panel {
+    background: #2e2e2e;
+    border: none;
+}
+
+.sphinx-tabs-tab {
+    color: white;
+    background: black;
+    border-bottom: solid 1px white;
+}
+
+.sphinx-tabs-tab[aria-selected='true'] {
+    background: #2e2e2e;
+    color: white;
+    border: none;
+    border-bottom: solid 1px #2e2e2e;
+}
+
+[role='tablist'] {
+    border-bottom: none
+}
