@@ -22,31 +22,36 @@ Getting Started
 
 First enter this piece of code shown above. You import the module using this.
 
-If you wish, you can shorten more of the module name by using ``import pyspl as spl``. Well, don't complain "the name is too long".
+If you wish, you can shorten more of the module name by using ``import pyspl as spl``.
 I could've named it "python_shakespeare_programming_langauge". ;)
 
 Then enter:
 
 .. code-block:: python
 
-   hamlet = pyspl.Character('Hamlet', 'a male.')
-   juliet = pyspl.Character('Juliet', 'a female.')
+    hamlet = pyspl.Character('Hamlet', 'a male.')
+    juliet = pyspl.Character('Juliet', 'a female.')
 
-   play = pyspl.Play()
-   play.add_characters(hamlet, juliet)
+    play = pyspl.Play('Hi? Hi.')
 
-   class ActI(rspl.Act):
-      @rspl.scene('I', 'The Only Scene.')
-      def sceneI(self):
-         play.enter(hamlet, juliet)
-         play.set(juliet, pyspl.sum(64, 8))
-         play.print(juliet, str)
-         play.set(hamlet, pyspl.sum(juliet.value, pyspl.sum(32, 1)))
-         play.print(hamlet, str)
+    hamlet = play.character('Hamlet', 'a male.')
+    juliet = play.character('Juliet', 'a female.')
 
-   play.add_act(ActI(), 'I', 'The Only Act.')
+    class ActI(pyspl.Act):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.add_scene(self.sceneI, 'I', 'The Only Scene.')
+
+    def sceneI(self):
+        self.enter(hamlet, juliet)
+        self.set(juliet, pyspl.sum(64, 8))
+        self.print(juliet, str)
+        self.set(hamlet, pyspl.sum(juliet, pyspl.sum(32, 1)))
+        self.print(hamlet, str)
+        self.exit()
          
-We added two characters to the program, then written a program to print Hi.
+We added two characters to the program, then written a program to print Hi using the 
+ASCII codes.
 
 Then add:
 
