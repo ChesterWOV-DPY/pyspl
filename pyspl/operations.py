@@ -1,4 +1,4 @@
-from typing import Union, TypeVar
+from typing import Union
 from math import log2
 import random
 
