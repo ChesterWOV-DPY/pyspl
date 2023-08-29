@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import Callable
+import os
+from typing import Callable, Union
 
 from .character import Character
 from .errors import StageLimitExceeded, CharacterNotOnstage, NotEnoughCharacters
-from .operations import Value, Int, Operation, value_as_str
+from .operations import Value, value_as_str
 
 @dataclass
 class _Act:
@@ -56,15 +57,27 @@ class Play:
 
         :return: The character created.
         :rtype: Character
-        :raises ValueError: The character name supplied is invalid.
         """
         character = Character(name, description)
         return character
     
     def add_act(self, act: 'Act', number: str, description: str):
+        """
+        Adds an act to the play.
+
+        :param Act act: An Act object. Note that it should be an instance of a class, not the class itself.
+        :param str number: A roman numeral representing the order. PySPL does not actually consider this, it is here just for the SPL syntax.
+        :param str description: The description of the act. Must end with a period.
+        """
         self.acts.append(_Act(act, number, description))
 
-    def code(self):
+    def code(self) -> str:
+        """
+        Generates SPL code for this play.
+
+        :returns: A piece of SPL code generated for this play.
+        :rtype: str
+        """
         self.lines = [self.description, '\n']
         for character in self._characters:
             self.lines.append(f'{character.name}, {character.description}')
@@ -76,9 +89,15 @@ class Play:
 
         return '\n'.join(self.lines)
 
-    def save(self, fn: str):
+    def save(self, fn: Union[str, bytes, os.PathLike], mode='w') -> None:
+        """
+        Saves SPL code for this play into _fn_ using the mode specified.
+
+        :param str fn: The file to write to.
+        :param str mode: The mode to use for writing. Defaults to 'w'.
+        """
         self.code()
-        with open(fn, 'w') as f:
+        with open(fn, mode) as f:
             for line in self.lines:
                 f.write(line + '\n')
 
@@ -128,8 +147,6 @@ class Act:
     @staticmethod
     def scene(number: str, description: str):
         """
-        :decorator:
-
         Adds the function as a scene to the act.
 
         This is a decorator.
@@ -161,6 +178,8 @@ class Act:
 
         :param \*characters: The characters to enter the stage.
         :type \*characters: Character, ...
+
+        :raises StageLimitExceeded: There are too many characters on stage.
         """
         if len(characters) + len(self._play._characters_on_stage) > 2:
             raise StageLimitExceeded('character limit onstage exceeded')
@@ -174,6 +193,8 @@ class Act:
 
         :param \*characters: The characters to exit the stage. If not provided, all characters onstage will exit the stage.
         :type \*characters: Character, ...
+
+        :raises CharacterNotOnstage: The character who is trying to exit is not onstage.
         """
         for character in characters:
             if character not in self._play._characters_on_stage:
@@ -198,6 +219,9 @@ class Act:
         :param Character target: The character being set.
         :param value: The value to set.
         :type value: int | Character | Operation
+
+        :raises CharacterNotOnstage: The target is not onstage.
+        :raises NotEnoughCharacters: There is only one character onstage. 
         """
         characters_onstage = [*self._play._characters_on_stage]
         if target not in characters_onstage:
@@ -214,6 +238,12 @@ class Act:
         self._lines.append(f'{setter}: You are {value_as_str(value)}!')
 
     def print(self, target: Character, type: type[str|int]=str):
+        """
+        Prints the value of a character.
+
+        :param Character target: The character being printed.
+        :param type: The type to print. Defaults to ``str``.
+        """
         characters_onstage = [*self._play._characters_on_stage]
         if target not in characters_onstage:
             raise CharacterNotOnstage('tried to print value of a character not on stage')

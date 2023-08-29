@@ -59,11 +59,12 @@ Then add:
 
    play.save('./play.spl')
 
-You should then run the following command in your terminal/command prompt (if you haven't yet):
+You should then install the latest version of `zmbc's SPL interpreter <https://github.com/zmbc/shakespearelang>`_, which is written 
+in Python (if you haven't yet):
 
 .. tabs::
 
-   .. group-tab:: Unix (Mac/Linux)
+   .. group-tab:: Mac / Linux
 
       .. code-block:: console
 
@@ -75,14 +76,11 @@ You should then run the following command in your terminal/command prompt (if yo
 
          > git clone https://github.com/zmbc/shakespearelang && pip install .\shakespearelang
 
-That should install the latest version of `zmbc's SPL interpreter <https://github.com/zmbc/shakespearelang>`_, which is written 
-in Python. 
-
 You can then run your SPL play by using the following command in your console:
 
 .. tabs::
 
-   .. group-tab:: Unix (Mac/Linux)
+   .. group-tab:: Mac / LInux
 
       .. code-block:: console
 
@@ -99,7 +97,7 @@ If it doesn't work, using the following command might work:
 
 .. tabs::
 
-   .. group-tab:: Unix (Mac/Linux)
+   .. group-tab:: Mac / Linux
 
       .. code-block:: console
 

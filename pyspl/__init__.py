@@ -7,4 +7,4 @@ from .play import *
 __name__ = 'pyspl'
 __author__ = 'ChesterWOV'
 __copyright__ = 'Copyright 2023-present ChesterWOV'
-__version__ = '0.1'
+__version__ = '0.1b'

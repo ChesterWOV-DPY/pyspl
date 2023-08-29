@@ -16,7 +16,8 @@ This package is mainly object-oriented.
 
 .. note::
 
-   This project is still under development.
+   This project is still under development. Some SPL functions have not been implemented yet,
+   such as input, stacks, and character names.
 
 For starters, please go to :doc:`quickstart`.
 
