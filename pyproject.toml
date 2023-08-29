@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "pyspl"
 dynamic = ["version"]
 description = 'A simple package for creating Shakespeare programs'
-readme = "README.md"
+readme = "README.rst"
 requires-python = ">=3.7"
 license = "MIT"
 keywords = []
