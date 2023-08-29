@@ -26,6 +26,9 @@ Operations on Numbers
 .. autoclass:: pyspl.Int
     :members:
 
+.. autoclass:: pyspl.Operation
+    :members:
+
 .. autoclass:: pyspl.sum
     :members:
 
@@ -61,4 +64,10 @@ Errors
     :members:
 
 .. autoclass:: pyspl.InvalidNumberError
+    :members:
+
+.. autoclass:: pyspl.CharacterNotOnstage
+    :members:
+
+.. autoclass:: pyspl.NotEnoughCharacters
     :members:

@@ -78,6 +78,12 @@ class Int:
         raise Exception('how tf did you get here')
 
 class Operation:
+    """
+    A operation.
+
+    This is a base class for all operations.
+    """
+
     def _code(self) -> str: return ''
 
 class TwoNumberOperation(Operation):
@@ -100,46 +106,31 @@ class TwoNumberOperation(Operation):
 
 class sum(TwoNumberOperation, text='the sum of'):
     """
-    Represents the sum of *a* and *b* (:math:`a + b`).
-
-    :param a,b: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type a,b: int | Character
+    Represents the sum of *a* and *b* (:math:`a + b`)
     """
     pass
 
 class difference(TwoNumberOperation, text='the difference between'):
     """
     Represents the difference between *a* and *b* (:math:`a - b`).
-
-    :param a,b: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type a,b: int | Character
     """
     pass
 
 class product(TwoNumberOperation, text='the product of'):
     """
     Represents the product of *a* and *b* (:math:`a \\times b`).
-
-    :param a,b: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type a,b: int | Character
     """
     pass
 
 class quotient(TwoNumberOperation, text='the quotient between'):
     """
     Represents the quotient of *a* and *b* (``a // b``).
-
-    :param a,b: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type a,b: int | Character
     """
     pass
 
 class remainder(TwoNumberOperation, text='the remainder of the quotient between'):
     """
     Represents the remainder of the quotient of *a* and *b* (``a % b``).
-
-    :param a,b: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type a,b: int | Character
     """
     pass
 
@@ -159,36 +150,24 @@ class OneNumberOperation(Operation):
 class square(OneNumberOperation, text='the square of'):
     """
     Represents the square of *x* (:math:`x^2`).
-
-    :param x: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type x: int | Character
     """
     pass
 
 class cube(OneNumberOperation, text='the cube of'):
     """
     Represents the cube of *x* (:math:`x^3`).
-
-    :param x: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type x: int | Character
     """
     pass
 
 class squareroot(OneNumberOperation, text='the square root of'):
     """
     Represents the square root of *x* (:math:`\\sqrt{x}`).
-
-    :param x: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type x: int | Character
     """
     pass
 
 class factorial(OneNumberOperation, text='the factorial of'):
     """
     Represents the factorial of *x* (:math:`x!`).
-
-    :param x: Can be a :py:class:`Character` or an (built-in) :py:class:`int`.
-    :type x: int | Character
     """
     pass
 

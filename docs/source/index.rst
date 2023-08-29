@@ -1,4 +1,4 @@
-.. Lumache documentation master file, created by
+.. PySPL documentation master file, created by
    sphinx-quickstart on Fri Aug 18 20:01:04 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -17,7 +17,7 @@ This package is mainly object-oriented.
 .. note::
 
    This project is still under development. Some SPL functions have not been implemented yet,
-   such as input, stacks, and character names.
+   such as input and stacks.
 
 For starters, please go to :doc:`quickstart`.
 
@@ -34,6 +34,7 @@ Indices and tables
    
    quickstart
    api
+   nna
 
 External Links
 --------------
