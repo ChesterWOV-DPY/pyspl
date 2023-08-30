@@ -3,4 +3,4 @@
 
 This package is mainly object-oriented.
 
-The docs are `here <https://pyspl.readthedocs.io>`_.
+The docs are [here](https://pyspl.readthedocs.io).
