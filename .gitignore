@@ -4,3 +4,4 @@ __pycache__
 docs/build
 docs/*.bat
 docs/Makefile
+dist

@@ -11,7 +11,7 @@ To use **PySPL**, first install it using ``pip``:
 
 .. code-block:: console
 
-   (.venv) $ pip install pyspl
+   (.venv) $ pip install py2spl
 
 
 Getting Started

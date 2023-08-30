@@ -3,15 +3,15 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pyspl"
+name = "py2spl"
 dynamic = ["version"]
 description = 'A simple package for creating Shakespeare programs'
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "ChesterWOV", email = "chestercchc@gmail.com" },
+  { name = "ChesterWOV", email = "chesterwov@gmail.com" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
