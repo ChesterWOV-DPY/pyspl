@@ -22,15 +22,17 @@ Getting Started
 
 First enter this piece of code shown above. You import the module using this.
 
-If you wish, you can shorten more of the module name by using ``import pyspl as spl``.
-I could've named it "python_shakespeare_programming_langauge". ;)
+.. note:: 
+
+   If your type checker does not like that, you can instead use the following to import PySPL:
+
+   .. code-block:: python
+
+      from py2spl import pyspl
 
 Then enter:
 
 .. code-block:: python
-
-    hamlet = pyspl.Character('Hamlet', 'a male.')
-    juliet = pyspl.Character('Juliet', 'a female.')
 
     play = pyspl.Play('Hi? Hi.')
 
@@ -80,7 +82,7 @@ You can then run your SPL play by using the following command in your console:
 
 .. tabs::
 
-   .. group-tab:: Mac / LInux
+   .. group-tab:: Mac / Linux
 
       .. code-block:: console
 

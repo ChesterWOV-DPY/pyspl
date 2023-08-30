@@ -3,6 +3,13 @@ API Documentation
 .. note::
     For quicker navigation of this page, you can use the Table of Contents on the right sidebar.
 
+Module Constants
+----------------
+.. py:data:: pyspl.__version__
+    :type: str
+
+    Returns a string with the format ``{major}.{minor}.{patch}``, for example: ``0.1.1``.
+
 Plays
 -----
 .. autoclass:: pyspl.Play
