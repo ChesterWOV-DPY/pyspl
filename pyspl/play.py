@@ -113,7 +113,7 @@ class Scene:
     .. warning::
 
         This should not be constructed manually by the user. 
-        Instead, use :py:meth:`Act.scene` or :py:meth:`Act.add_scene`.
+        Instead, use :py:meth:`Act.add_scene`.
 
     """
     name: str
@@ -124,7 +124,7 @@ class Act:
     """
     Represents an act in a SPL play.
 
-    The recommended way is to subclass this object and create methods inside it, then add them by using :py:func:`Act.scene`.
+    The recommended way is to subclass this object and create methods inside it, then add them by using :py:meth:`Act.add_scene`.
 
     Example
     ^^^^^^^
@@ -133,8 +133,8 @@ class Act:
         class Act1(pyspl.Act):
             def __init__(self):
                 super().__init__(self, 'I', 'The First Act.')
+                self.add_scene(sceneI)
 
-            @pyspl.Act.scene('I', 'The First Scene.')
             def scene1(self):
                 # do whatever you need to do here
                 pass    
