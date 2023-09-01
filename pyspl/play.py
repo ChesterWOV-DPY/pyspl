@@ -59,6 +59,7 @@ class Play:
         :rtype: Character
         """
         character = Character(name, description)
+        self.add_character(character)
         return character
     
     def add_act(self, act: 'Act', number: str, description: str):
@@ -257,7 +258,29 @@ class Act:
 
         self._lines.append(f'{printer}: {line}!')
 
-    def 
+    def input(self, target: Character, type: type[str|int]=str):
+        """
+        Receives input and sets the target to that value.
+
+        :param Character target: The character being set.
+        :param type: The type to receive. Defaults to ``str``.
+        """
+        characters_onstage = self._play._characters_on_stage
+        if target not in characters_onstage:
+            raise CharacterNotOnstage('tried to set value of a character not on stage')
+        if len(characters_onstage) < 2:
+            raise NotEnoughCharacters('unable to set character value: only one character on stage')
+        
+        setter = self._get_opposite_character(target)
+
+        if type == str:
+            line = 'Open your mind'
+        elif type == int:
+            line = 'Listen to your heart'
+        else:
+            raise TypeError('invalid type to print')
+        
+        self._lines.append(f'{setter}: {line}!')
 
     def _get_opposite_character(self, character: Character):
         characters_onstage = self._play._characters_on_stage
