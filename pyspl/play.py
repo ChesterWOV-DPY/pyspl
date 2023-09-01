@@ -113,7 +113,7 @@ class Scene:
     .. warning::
 
         This should not be constructed manually by the user. 
-        Instead, use :py:meth:`Act.scene` or :py:meth:`Act.add_scene`.
+        Instead, use :py:meth:`Act.add_scene`.
 
     """
     name: str
@@ -124,7 +124,7 @@ class Act:
     """
     Represents an act in a SPL play.
 
-    The recommended way is to subclass this object and create methods inside it, then add them by using :py:func:`Act.scene`.
+    The recommended way is to subclass this object and create methods inside it, then add them by using :py:meth:`Act.add_scene`.
 
     Example
     ^^^^^^^
@@ -133,8 +133,8 @@ class Act:
         class Act1(pyspl.Act):
             def __init__(self):
                 super().__init__(self, 'I', 'The First Act.')
+                self.add_scene(sceneI)
 
-            @pyspl.Act.scene('I', 'The First Scene.')
             def scene1(self):
                 # do whatever you need to do here
                 pass    
@@ -144,24 +144,6 @@ class Act:
         self._play = play
         self._scene_names: list[Scene] = []
         self._lines: list[str] = []
-    
-    @staticmethod
-    def scene(number: str, description: str):
-        """
-        Adds the function as a scene to the act.
-
-        This is a decorator.
-
-        :param str number: A roman numeral representing the number of the scene. 
-        :param str description: The description of the scene. Must end with a period (AKA a full stop) (``.``).
-        """
-        def decorator(func: Callable):
-            def wrapper(self, *args, **kwargs):
-                self.add_scene(func, number, description)
-                func(self, *args, **kwargs)
-
-            return wrapper
-        return decorator
     
     def add_scene(self, func: Callable, number: str, description: str) -> None:
         """
@@ -281,6 +263,40 @@ class Act:
             raise TypeError('invalid type to print')
         
         self._lines.append(f'{setter}: {line}!')
+
+    def remember(self, target: Character, value: Value):
+        """
+        Pushes the value onto the target's stack.
+
+        :param Character target: The character to be modified.
+        :param value: The value to push.
+        :type value: int | Character | Operation
+        """
+        characters_onstage = self._play._characters_on_stage
+        if target not in characters_onstage:
+            raise CharacterNotOnstage('tried to push to the stack of a character not on stage')
+        if len(characters_onstage) < 2:
+            raise NotEnoughCharacters('unable to push to the stack of character: only one character on stage')
+        
+        setter = self._get_opposite_character(target)
+
+        self._lines.append(f'{setter}: Remember {value_as_str(value)}!')
+
+    def pop(self, target: Character):
+        """
+        Pops an item from the target's stack and set him/her to it.
+
+        :param Character target: The character to be modified.
+        """
+        characters_onstage = self._play._characters_on_stage
+        if target not in characters_onstage:
+            raise CharacterNotOnstage('tried to pop from the stack of a character not on stage')
+        if len(characters_onstage) < 2:
+            raise NotEnoughCharacters('unable to pop from the stack of character: only one character on stage')
+        
+        setter = self._get_opposite_character(target)
+
+        self._lines.append(f'{setter}: Recall yourself!')
 
     def _get_opposite_character(self, character: Character):
         characters_onstage = self._play._characters_on_stage
