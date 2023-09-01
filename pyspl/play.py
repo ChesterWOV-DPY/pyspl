@@ -79,14 +79,14 @@ class Play:
         :returns: A piece of SPL code generated for this play.
         :rtype: str
         """
-        self.lines = [self.description, '\n']
+        self.lines = [self.description, '']
         for character in self._characters:
             self.lines.append(f'{character.name}, {character.description}')
-        self.lines.append('\n')
+        self.lines.append('')
         for act in self.acts:
             lines = act.obj._gencode(act.number, act.description)
             self.lines.extend(lines)
-            self.lines.append('\n')
+            self.lines.append('')
 
         return '\n'.join(self.lines)
 
