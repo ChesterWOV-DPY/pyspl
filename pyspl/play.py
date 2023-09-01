@@ -59,6 +59,7 @@ class Play:
         :rtype: Character
         """
         character = Character(name, description)
+        self.add_character(character)
         return character
     
     def add_act(self, act: 'Act', number: str, description: str):
@@ -223,17 +224,13 @@ class Act:
         :raises CharacterNotOnstage: The target is not onstage.
         :raises NotEnoughCharacters: There is only one character onstage. 
         """
-        characters_onstage = [*self._play._characters_on_stage]
+        characters_onstage = self._play._characters_on_stage
         if target not in characters_onstage:
             raise CharacterNotOnstage('tried to set value of a character not on stage')
         if len(characters_onstage) < 2:
             raise NotEnoughCharacters('unable to set character value: only one character on stage')
         
-        first_item = characters_onstage.pop(0)
-        if first_item == target:
-            setter = characters_onstage[0] # The second item (index=1) is now the first item (index=0).
-        else:
-            setter = first_item
+        setter = self._get_opposite_character(target)
 
         self._lines.append(f'{setter}: You are {value_as_str(value)}!')
 
@@ -244,17 +241,13 @@ class Act:
         :param Character target: The character being printed.
         :param type: The type to print. Defaults to ``str``.
         """
-        characters_onstage = [*self._play._characters_on_stage]
+        characters_onstage = self._play._characters_on_stage
         if target not in characters_onstage:
             raise CharacterNotOnstage('tried to print value of a character not on stage')
         if len(characters_onstage) < 2:
             raise NotEnoughCharacters('unable to print character value: only one character on stage')
         
-        first_item = characters_onstage.pop(0)
-        if first_item == target:
-            printer = characters_onstage[0] # The second item (index=1) is now the first item (index=0).
-        else:
-            printer = first_item
+        printer = self._get_opposite_character(target)
         
         if type == str:
             line = 'Speak your mind'
@@ -264,6 +257,40 @@ class Act:
             raise TypeError('invalid type to print')
 
         self._lines.append(f'{printer}: {line}!')
+
+    def input(self, target: Character, type: type[str|int]=str):
+        """
+        Receives input and sets the target to that value.
+
+        :param Character target: The character being set.
+        :param type: The type to receive. Defaults to ``str``.
+        """
+        characters_onstage = self._play._characters_on_stage
+        if target not in characters_onstage:
+            raise CharacterNotOnstage('tried to set value of a character not on stage')
+        if len(characters_onstage) < 2:
+            raise NotEnoughCharacters('unable to set character value: only one character on stage')
+        
+        setter = self._get_opposite_character(target)
+
+        if type == str:
+            line = 'Open your mind'
+        elif type == int:
+            line = 'Listen to your heart'
+        else:
+            raise TypeError('invalid type to print')
+        
+        self._lines.append(f'{setter}: {line}!')
+
+    def _get_opposite_character(self, character: Character):
+        characters_onstage = self._play._characters_on_stage
+        first_item = characters_onstage[0]
+        if first_item == character:
+            c = characters_onstage[1] # The second item (index=1) is now the first item (index=0).
+        else:
+            c = first_item
+
+        return c
 
     def _gencode(self, number: str, description: str):
         self._lines = [f'Act {number}: {description}']
